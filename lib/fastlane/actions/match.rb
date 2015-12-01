@@ -1,11 +1,11 @@
 module Fastlane
   module Actions
-    class FastfixAction < Action
+    class MatchAction < Action
       def self.run(params)
-        require 'fastfix'
+        require 'match'
 
         params.load_configuration_file("Fixfile")
-        Fastfix::Runner.new.run(params)
+        Match::Runner.new.run(params)
       end
 
       #####################################################
@@ -17,12 +17,12 @@ module Fastlane
       end
 
       def self.details
-        "More details https://github.com/fastlane/fastfix"
+        "More details https://github.com/fastlane/match"
       end
 
       def self.available_options
-        require 'fastfix'
-        Fastfix::Options.available_options
+        require 'match'
+        Match::Options.available_options
       end
 
       def self.output
