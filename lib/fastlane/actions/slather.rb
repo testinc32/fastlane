@@ -32,7 +32,13 @@ module Fastlane
         command += " --show" if params[:show]
         command += " --source-directory #{params[:source_directory]}" if params[:source_directory]
         command += " --output-directory #{params[:output_directory]}" if params[:output_directory]
-        command += " --ignore #{params[:ignore]}" if params[:ignore]
+        if params[:ignore]
+          command += if params[:ignore].kind_of?(String)
+                       " --ignore \"#{params[:ignore]}\""
+                     else
+                       " #{params[:ignore].map { |path| "--ignore \"#{path}\"" }.join(' ')}"
+                     end
+        end
         command += " #{params[:proj]}"
         sh command
       end
@@ -135,7 +141,8 @@ Slather is available at https://github.com/venmo/slather
                                        optional: true),
           FastlaneCore::ConfigItem.new(key: :ignore,
                                        env_name: "FL_SLATHER_IGNORE",
-                                       description: "Tell slather to ignore files matching a path",
+                                       description: "Tell slather to ignore files matching a path or an array of paths",
+                                       is_string: false,
                                        optional: true),
           FastlaneCore::ConfigItem.new(key: :use_bundle_exec,
                                       env_name: "FL_SLATHER_USE_BUNDLE_EXEC",
