@@ -32,12 +32,10 @@ module Fastlane
         command += " --show" if params[:show]
         command += " --source-directory #{params[:source_directory]}" if params[:source_directory]
         command += " --output-directory #{params[:output_directory]}" if params[:output_directory]
-        if params[:ignore]
-          command += if params[:ignore].kind_of?(String)
-                       " --ignore \"#{params[:ignore]}\""
-                     else
-                       " #{params[:ignore].map { |path| "--ignore \"#{path}\"" }.join(' ')}"
-                     end
+        if params[:ignore].kind_of?(String)
+          command += " --ignore \"#{params[:ignore]}\""
+        elsif params[:ignore].kind_of?(Array)
+          command += " #{params[:ignore].map { |path| "--ignore \"#{path}\"" }.join(' ')}"
         end
         command += " #{params[:proj]}"
         sh command
