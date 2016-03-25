@@ -106,28 +106,44 @@ module Spaceship
     end
     private :platform_slug
 
+    def builder
+      @builder ||= Spaceship::Portal::RequestBuilder.new(self)
+    end
+
+    def method_missing(method, *args, &block)
+      if builder.respond_to?(method)
+        builder.send(method, *args, &block)
+      else
+        super
+      end
+    end
+
     #####################################################
     # @!group Apps
     #####################################################
 
     def apps(mac: false)
+      if mac
+        builder.mac
+      end
+
       paging do |page_number|
-        r = request(:post, "account/#{platform_slug(mac)}/identifiers/listAppIds.action", {
-          teamId: team_id,
+        request = builder.identifiers.post('listAppIds.action', {
           pageNumber: page_number,
           pageSize: page_size,
           sort: 'name=asc'
         })
-        parse_response(r, 'appIds')
+        parse_response(request.execute, 'appIds')
       end
     end
 
     def details_for_app(app)
-      r = request(:post, "account/#{platform_slug(app.mac?)}/identifiers/getAppIdDetail.action", {
-        teamId: team_id,
-        appIdId: app.app_id
-      })
-      parse_response(r, 'appId')
+      if app.mac?
+        builder.mac
+      end
+
+      request = builder.identifiers.post('getAppIdDetail.action', {appIdId: app.app_id})
+      parse_response(request.execute, 'appId')
     end
 
     def update_service_for_app(app, service)
