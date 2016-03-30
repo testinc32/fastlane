@@ -196,16 +196,24 @@ module Spaceship
 
       ensure_csrf
 
-      r = request(:post, "account/#{platform_slug(mac)}/identifiers/addAppId.action", params)
-      parse_response(r, 'appId')
+      if mac
+        builder.mac
+      end
+
+      request = builder.account.identifiers.post('addAppId.action', params)
+      parse_response(request.execute, 'appId')
     end
 
     def delete_app!(app_id, mac: false)
-      r = request(:post, "account/#{platform_slug(mac)}/identifiers/deleteAppId.action", {
+      if mac
+        builder.mac
+      end
+
+      request = builder.account.identifiers.post('deleteAppId.action', {
         teamId: team_id,
         appIdId: app_id
       })
-      parse_response(r)
+      parse_response(request.execute)
     end
 
     #####################################################
@@ -214,31 +222,31 @@ module Spaceship
 
     def app_groups
       paging do |page_number|
-        r = request(:post, 'account/ios/identifiers/listApplicationGroups.action', {
+        request = builder.account.identifiers.post('listApplicationGroups.action', {
           teamId: team_id,
           pageNumber: page_number,
           pageSize: page_size,
           sort: 'name=asc'
         })
-        parse_response(r, 'applicationGroupList')
+        parse_response(request.execute, 'applicationGroupList')
       end
     end
 
     def create_app_group!(name, group_id)
-      r = request(:post, 'account/ios/identifiers/addApplicationGroup.action', {
+      request = builder.account.identifiers.post('addApplicationGroup.action', {
         name: name,
         identifier: group_id,
         teamId: team_id
       })
-      parse_response(r, 'applicationGroup')
+      parse_response(request.execute, 'applicationGroup')
     end
 
     def delete_app_group!(app_group_id)
-      r = request(:post, 'account/ios/identifiers/deleteApplicationGroup.action', {
+      request = builder.account.identifiers.post('deleteApplicationGroup.action', {
         teamId: team_id,
         applicationGroup: app_group_id
       })
-      parse_response(r)
+      parse_response(request.execute)
     end
 
     #####################################################
@@ -246,27 +254,31 @@ module Spaceship
     #####################################################
 
     def devices(mac: false)
+      if mac
+        builder.mac
+      end
+
       paging do |page_number|
-        r = request(:post, "account/#{platform_slug(mac)}/device/listDevices.action", {
+        request = builder.account.device.post('listDevices.action', {
           teamId: team_id,
           pageNumber: page_number,
           pageSize: page_size,
           sort: 'name=asc'
         })
-        parse_response(r, 'devices')
+        parse_response(request.execute, 'devices')
       end
     end
 
     def devices_by_class(device_class)
       paging do |page_number|
-        r = request(:post, 'account/ios/device/listDevices.action', {
+        request = builder.account.device.post('listDevices.action', {
           teamId: team_id,
           pageNumber: page_number,
           pageSize: page_size,
           sort: 'name=asc',
           deviceClasses: device_class
         })
-        parse_response(r, 'devices')
+        parse_response(request.execute, 'devices')
       end
     end
 
@@ -288,39 +300,49 @@ module Spaceship
     #####################################################
 
     def certificates(types, mac: false)
+      if mac
+        builder.mac
+      end
+
       paging do |page_number|
-        r = request(:post, "account/#{platform_slug(mac)}/certificate/listCertRequests.action", {
+        request = builder.account.certificate.post('listCertRequests.action', {
           teamId: team_id,
           types: types.join(','),
           pageNumber: page_number,
           pageSize: page_size,
           sort: 'certRequestStatusCode=asc'
         })
-        parse_response(r, 'certRequests')
+        parse_response(request.execute, 'certRequests')
       end
     end
 
     def create_certificate!(type, csr, app_id = nil)
       ensure_csrf
 
-      r = request(:post, 'account/ios/certificate/submitCertificateRequest.action', {
+      request = builder.account.certificate.post('submitCertificateRequest.action', {
         teamId: team_id,
         type: type,
         csrContent: csr,
         appIdId: app_id # optional
       })
-      parse_response(r, 'certRequest')
+      parse_response(request.execute, 'certRequest')
     end
 
     def download_certificate(certificate_id, type, mac: false)
       { type: type, certificate_id: certificate_id }.each { |k, v| raise "#{k} must not be nil" if v.nil? }
 
-      r = request(:get, "account/#{platform_slug(mac)}/certificate/downloadCertificateContent.action", {
+      if mac
+        builder.mac
+      end
+
+      request = builder.account.certificate.get('downloadCertificateContent.action', {
         teamId: team_id,
         certificateId: certificate_id,
         type: type
       })
+      r = request.execute
       a = parse_response(r)
+
       if r.success? && a.include?("Apple Inc")
         return a
       else
@@ -329,12 +351,16 @@ module Spaceship
     end
 
     def revoke_certificate!(certificate_id, type, mac: false)
-      r = request(:post, "account/#{platform_slug(mac)}/certificate/revokeCertificate.action", {
+      if mac
+        builder.mac
+      end
+
+      request = builder.account.certificate.post('revokeCertificate.action', {
         teamId: team_id,
         certificateId: certificate_id,
         type: type
       })
-      parse_response(r, 'certRequests')
+      parse_response(request.execute, 'certRequests')
     end
 
     #####################################################
@@ -357,7 +383,11 @@ module Spaceship
     def create_provisioning_profile!(name, distribution_method, app_id, certificate_ids, device_ids, mac: false)
       ensure_csrf
 
-      r = request(:post, "account/#{platform_slug(mac)}/profile/createProvisioningProfile.action", {
+      if mac
+        builder.mac
+      end
+
+      request = builder.account.profile.post('createProvisioningProfile.action', {
         teamId: team_id,
         provisioningProfileName: name,
         appIdId: app_id,
@@ -365,14 +395,19 @@ module Spaceship
         certificateIds: certificate_ids,
         deviceIds: device_ids
       })
-      parse_response(r, 'provisioningProfile')
+      parse_response(request.execute, 'provisioningProfile')
     end
 
     def download_provisioning_profile(profile_id, mac: false)
-      r = request(:get, "account/#{platform_slug(mac)}/profile/downloadProfileContent", {
+      if mac
+        builder.mac
+      end
+      
+      request = builder.account.profile.get('downloadProfileContent', {
         teamId: team_id,
         provisioningProfileId: profile_id
       })
+      r = request.execute
       a = parse_response(r)
       if r.success? && a.include?("DOCTYPE plist PUBLIC")
         return a
@@ -384,15 +419,23 @@ module Spaceship
     def delete_provisioning_profile!(profile_id, mac: false)
       ensure_csrf
 
-      r = request(:post, "account/#{platform_slug(mac)}/profile/deleteProvisioningProfile.action", {
+      if mac
+        builder.mac
+      end
+
+      request = builder.account.profile.post('deleteProvisioningProfile.action', {
         teamId: team_id,
         provisioningProfileId: profile_id
       })
-      parse_response(r)
+      parse_response(request.execute)
     end
 
     def repair_provisioning_profile!(profile_id, name, distribution_method, app_id, certificate_ids, device_ids, mac: false)
-      r = request(:post, "account/#{platform_slug(mac)}/profile/regenProvisioningProfile.action", {
+      if mac
+        builder.mac
+      end
+
+      request = builder.account.profile.post('regenProvisioningProfile.action', {
         teamId: team_id,
         provisioningProfileId: profile_id,
         provisioningProfileName: name,
@@ -402,7 +445,7 @@ module Spaceship
         deviceIds: device_ids
       })
 
-      parse_response(r, 'provisioningProfile')
+      parse_response(request.execute, 'provisioningProfile')
     end
 
     private

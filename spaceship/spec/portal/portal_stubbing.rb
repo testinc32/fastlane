@@ -74,6 +74,14 @@ def adp_stub_provisioning
   stub_request(:post, "https://developer.apple.com/services-account/QH65B2/account/ios/profile/deleteProvisioningProfile.action").
     with(body: { "provisioningProfileId" => "2MAY7NPHRU", "teamId" => "XXXXXXXXXX" }).
     to_return(status: 200, body: adp_read_fixture_file('deleteProvisioningProfile.action.json'), headers: { 'Content-Type' => 'application/json' })
+
+  # Create tvOS Profiles  
+  # stub_request(:post, "https://developer.apple.com/services-account/QH65B2/account/ios/identifiers/listAppIds.action").
+  #   with(:body => {"pageNumber"=>"1", "pageSize"=>"500", "sort"=>"name=asc", "subPlatform"=>"tvos", "teamId"=>"XXXXXXXXXX"}, :headers => {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3', 'Content-Type'=>'application/x-www-form-urlencoded', 'User-Agent'=>'Spaceship 0.24.1'}).
+  #   to_return(status: 200, body: adp_read_fixture_file('create_profile_success.json'), headers: { 'Content-Type' => 'application/json' })
+  stub_request(:post, "https://developer.apple.com/services-account/QH65B2/account/ios/profile/createProvisioningProfile.action").
+    with(body: { "appIdId" => "R9YNDTPLJX", "certificateIds" => "C8DL7464RQ", "subPlatform"=>"tvos", "deviceIds" => "C8DLAAAARQ", "distributionType" => "limited", "provisioningProfileName" => "net.sunapps.106 limited", "teamId" => "XXXXXXXXXX" }).
+    to_return(status: 200, body: adp_read_fixture_file('create_profile_success.json'), headers: { 'Content-Type' => 'application/json' })    
 end
 
 def adp_stub_devices
@@ -146,6 +154,11 @@ def adp_stub_apps
   stub_request(:post, 'https://developer.apple.com/services-account/QH65B2/account/ios/identifiers/listAppIds.action').
     with(body: { teamId: 'XXXXXXXXXX', pageSize: "500", pageNumber: "1", sort: 'name=asc' }).
     to_return(status: 200, body: adp_read_fixture_file('listApps.action.json'), headers: { 'Content-Type' => 'application/json' })
+
+  stub_request(:post, "https://developer.apple.com/services-account/QH65B2/account/ios/identifiers/listAppIds.action").
+         with(:body => {"pageNumber"=>"1", "pageSize"=>"500", "sort"=>"name=asc", "subPlatform"=>"tvos", "teamId"=>"XXXXXXXXXX"},
+              :headers => {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3', 'Content-Type'=>'application/x-www-form-urlencoded', 'User-Agent'=>'Spaceship 0.24.1'}).
+         to_return(:status => 200, :body => "", :headers => {})  
 
   stub_request(:post, "https://developer.apple.com/services-account/QH65B2/account/ios/identifiers/getAppIdDetail.action").
     with(body: { appIdId: "B7JBD8LHAA", teamId: "XXXXXXXXXX" }).

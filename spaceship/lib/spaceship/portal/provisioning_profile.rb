@@ -183,6 +183,12 @@ module Spaceship
           name.split('::').last
         end
 
+        def create_tvos!(name: nil, bundle_id: nil, certificate: nil, devices: [])
+          # Tell the builder that we want to use the tvos sub platform
+          client.builder.tvos
+          self.create!(name: name, bundle_id: bundle_id, certificate: certificate, devices: devices, mac: false)
+        end
+
         # Create a new provisioning profile
         # @param name (String): The name of the provisioning profile on the Dev Portal
         # @param bundle_id (String): The app identifier, this paramter is required

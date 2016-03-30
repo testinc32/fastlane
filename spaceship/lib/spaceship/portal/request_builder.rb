@@ -5,6 +5,7 @@ module Spaceship
     def initialize(client)
       @client = client
       @platform = 'ios'
+      @sub_platform = nil
       @host = 'developer.apple.com'
       @root = '/services-account'
       @protocol_version = 'QH65B2'
@@ -21,6 +22,7 @@ module Spaceship
 
     def tvos
       @platform = 'ios'
+      @sub_platform = 'tvos'
       self
     end
 
@@ -55,6 +57,11 @@ module Spaceship
       self
     end
 
+    def account
+      @resource = 'account'
+      self
+    end
+
     def action(endpoint)
       @action = endpoint
       self
@@ -68,7 +75,14 @@ module Spaceship
     def get(*args)
       action, params = extract_args(args)
       self.action(action)
-      @params = @default_params.merge(params)
+      @params = @default_params
+      if params
+        @params = @params.merge(params)
+      end
+      if @sub_platform
+        @params = @params.merge({subPlatform: @sub_platform})
+        @sub_platform = nil
+      end
       @verb = :get
 
       self
@@ -77,7 +91,14 @@ module Spaceship
     def post(*args)
       action, params = extract_args(args)
       self.action(action)
-      @params = @default_params.merge(params)
+      @params = @default_params
+      if params
+        @params = @params.merge(params)
+      end
+      if @sub_platform
+        @params = @params.merge({subPlatform: @sub_platform})
+        @sub_platform = nil
+      end
       @verb = :post
 
       self
