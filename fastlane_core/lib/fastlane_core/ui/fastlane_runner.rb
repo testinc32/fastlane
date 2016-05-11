@@ -24,6 +24,7 @@ module Commander
       begin
         collector.did_launch_action(@program[:name])
         run_active_command
+        collector.did_finish
       rescue InvalidCommandError => e
         abort "#{e}. Use --help for more information"
       rescue Interrupt => ex
@@ -42,10 +43,8 @@ module Commander
         collector.did_raise_error(@program[:name])
         display_user_error!(e, e.message)
       rescue => e # high chance this is actually FastlaneCore::Interface::FastlaneCrash, but can be anything else
-        collector.did_crash(@program[:name])
+        collector.did_raise_error(@program[:name])
         handle_unknown_error!(e)
-      ensure
-        collector.did_finish
       end
     end
 
