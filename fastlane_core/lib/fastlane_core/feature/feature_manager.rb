@@ -2,9 +2,14 @@ module FastlaneCore
   class FeatureManager
     @@enabled_features = []
 
+    def self.experiments_enabled?
+      return ENV['FASTLANE_ENABLE_ALL_EXPERIMENTS']
+    end
+
     def self.enabled?(key)
       feature = features.find { |feature| feature.key == key }
       return false if feature.nil?
+      return true if experiments_enabled? && feature.experiment == true
       return @@enabled_features.include?(key) || ENV[feature.env_var]
     end
 
@@ -30,7 +35,9 @@ module FastlaneCore
 
     def self.features
       [
-        Feature.new(:use_ruby_git, 'Use git gem for git operations.', 'USE_RUBY_GIT_FOR_MATCH', true)
+        Feature.new(key: :use_ruby_git,
+            description: 'Use git gem for git operations.',
+                env_var: 'USE_RUBY_GIT_FOR_MATCH')
       ]
     end
 
