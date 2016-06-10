@@ -1,27 +1,3 @@
-# would go somewhere else
-module Beta
-  def self.register_class_method(cls, symbol, default_symbol, override_symbol, environment_variable_name)
-    cls.define_singleton_method(symbol) do |*args|
-      if ENV[environment_variable_name]
-        cls.send(override_symbol, *args)
-      else
-        cls.send(default_symbol, *args)
-      end
-    end
-  end
-
-  def self.register_instance_method(cls, symbol, default_symbol, override_symbol, environment_variable_name)
-    cls.send(:define_method, symbol.to_s) do |*args|
-      if ENV[environment_variable_name]
-        self.send(override_symbol, *args)
-      else
-        self.send(default_symbol, *args)
-      end
-    end
-  end
-end
-
-
 module Match
   class GitHelper
     Beta.register_class_method(self, :run_clone, :run_clone_command_executor, :run_clone_ruby_git, 'USE_RUBY_GIT_FOR_MATCH')

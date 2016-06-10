@@ -268,6 +268,20 @@ module FastlaneCore
       @hide_transporter_output
     end
 
+    def java_transporter_executor_class
+      JavaTransporterExecutor
+    end
+
+    def shell_script_transporter_executor_class
+      ShellScriptTransporterExecutor
+    end
+
+    FeatureManager.register_instance_method(klass: self,
+      symbol: transporter_executor_class,
+      default_symbol: java_transporter_executor_class,
+      override_symbol: shell_script_transporter_executor_class,
+      key: :suseITMSShellScript)
+
     # Returns a new instance of the iTunesTransporter.
     # If no username or password given, it will be taken from
     # the #{CredentialsManager::AccountManager}
@@ -278,10 +292,19 @@ module FastlaneCore
     #                flag to the upload command.
     #                see: https://github.com/fastlane/fastlane/issues/1524
     def initialize(user = nil, password = nil, use_shell_script = false, team_id = nil)
+
+
+      :useITMSShellScript
+      if Helper.is_mac? && Helper.xcode_version.start_with?('6.')
+        FeatureSwitch.always_true(:useITMSShellScript)
+      end
+
       # Xcode 6.x doesn't have the same iTMSTransporter Java setup as later Xcode versions, so
       # we can't default to using the better direct Java invocation strategy for those versions.
-      use_shell_script ||= Helper.is_mac? && Helper.xcode_version.start_with?('6.')
-      use_shell_script ||= !ENV['FASTLANE_ITUNES_TRANSPORTER_USE_SHELL_SCRIPT'].nil?
+      FeatureManager.force(:useITMSTransporterShellScript) if Helper.is_mac? && Helper.xcode_version.start_with?('6.')
+      #use_shell_script ||= Helper.is_mac? && Helper.xcode_version.start_with?('6.')
+      #use_shell_script = FeatureManager.enabled?(:useITMSTransporterShellScript)
+      #use_shell_script ||= !ENV['FASTLANE_ITUNES_TRANSPORTER_USE_SHELL_SCRIPT'].nil?
 
       # First, see if we have an application specific password
       data = CredentialsManager::AccountManager.new(user: user,
@@ -298,7 +321,7 @@ module FastlaneCore
         @password ||= data.password
       end
 
-      @transporter_executor = use_shell_script ? ShellScriptTransporterExecutor.new : JavaTransporterExecutor.new
+      @transporter_excutor = transporter_executor_class.new
       @team_id = team_id || (ENV['FASTLANE_TEAM_ID'] || '').strip
     end
 
