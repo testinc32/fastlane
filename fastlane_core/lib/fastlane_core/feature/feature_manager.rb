@@ -35,9 +35,9 @@ module FastlaneCore
 
     def self.features
       [
-        Feature.new(key: :use_ruby_git,
-            description: 'Use git gem for git operations.',
-                env_var: 'USE_RUBY_GIT_FOR_MATCH')
+        Feature.new(key: :use_iTMS_transporter_shell_script,
+            description: 'Use iTunes Transporter shell script',
+                env_var: 'FASTLANE_ITUNES_TRANSPORTER_USE_SHELL_SCRIPT')
       ]
     end
 
