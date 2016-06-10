@@ -9,4 +9,3 @@ module FastlaneCore
     end
   end
 end
-
