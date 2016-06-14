@@ -11,7 +11,7 @@ module Gym
   class PackageCommandGeneratorLegacy
     class << self
       def generate
-        parts = ["/usr/bin/xcrun #{XcodebuildFixes.patch_package_application} -v"]
+        parts = ["/usr/bin/xcrun #{XcodebuildFixes.patch_package_application.shellescape} -v"]
         parts += options
         parts += pipe
 
@@ -47,7 +47,7 @@ module Gym
 
       def appfile_path
         path = Dir.glob("#{BuildCommandGenerator.archive_path}/Products/Applications/*.app").first
-        path ||= Dir[BuildCommandGenerator.archive_path + "/**/*.app"].last
+        path ||= Dir[BuildCommandGenerator.archive_path + "/**/*.app"].first
 
         return path
       end

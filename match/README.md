@@ -49,7 +49,7 @@ A new approach to iOS code signing: Share one code signing identity across your 
 
 -------
 
-<h5 align="center"><code>match</code> is part of <a href="https://fastlane.tools">fastlane</a>: connect all deployment tools into one streamlined workflow.</h5>
+<h5 align="center"><code>match</code> is part of <a href="https://fastlane.tools">fastlane</a>: The easiest way to automate building and releasing your iOS and Android apps.</h5>
 
 ## Why match?
 
@@ -128,9 +128,14 @@ app_identifier "tools.fastlane.app"
 username "user@fastlane.tools"
 ```
 
-#### Important: Use one git repo per team
+#### Important: Use one git branch per team
 
-`match` was designed to have one git repository per Apple account. If you work in multiple teams, please create one repo for each of them. More information on [codesigning.guide](https://codesigning.guide)
+`match` also supports storing certificates of multiple teams in one repo, by using separate git branches. If you work in multiple teams, make sure to set the `git_branch` parameter to a unique value per team. From there, `match` will automatically create and use the specified branch for you. 
+
+```ruby
+match(git_branch: "team1", username: "user@team1.com")
+match(git_branch: "team2", username: "user@team2.com")
+```
 
 ### Run
 
@@ -373,7 +378,7 @@ Because of the potentially dangerous nature of In-House profiles we decided to n
 
 ## [`fastlane`](https://fastlane.tools) Toolchain
 
-- [`fastlane`](https://fastlane.tools): Connect all deployment tools into one streamlined workflow
+- [`fastlane`](https://fastlane.tools): The easiest way to automate building and releasing your iOS and Android apps
 - [`deliver`](https://github.com/fastlane/fastlane/tree/master/deliver): Upload screenshots, metadata and your app to the App Store
 - [`snapshot`](https://github.com/fastlane/fastlane/tree/master/snapshot): Automate taking localized screenshots of your iOS app on every device
 - [`frameit`](https://github.com/fastlane/fastlane/tree/master/frameit): Quickly put your screenshots into the right device frames

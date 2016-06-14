@@ -49,7 +49,7 @@ Get in contact with the developer on Twitter: [@FastlaneTools](https://twitter.c
 
 -------
 
-<h5 align="center"><code>scan</code> is part of <a href="https://fastlane.tools">fastlane</a>: connect all deployment tools into one streamlined workflow.</h5>
+<h5 align="center"><code>scan</code> is part of <a href="https://fastlane.tools">fastlane</a>: The easiest way to automate building and releasing your iOS and Android apps.</h5>
 
 # What's scan?
 
@@ -141,9 +141,18 @@ That's all you need to run your tests. If you want more control, here are some a
 
     scan --workspace "Example.xcworkspace" --scheme "AppName" --device "iPhone 6" --clean
 
-If you need to use a different xcode install, use xcode-select or define DEVELOPER_DIR:
+If you need to use a different xcode install, use `xcode-select` or define `DEVELOPER_DIR`:
 
     DEVELOPER_DIR="/Applications/Xcode6.2.app" scan
+
+To run `scan` on multiple devices via [fastlane](https://fastlane.tools), add this to your `Fastfile`:
+
+```ruby
+scan(
+  workspace: "Example.xcworkspace",
+  devices: ["iPhone 6s", "iPad Air"]
+)
+```
 
 For a list of all available parameters use
 
@@ -159,6 +168,7 @@ Run `scan init` to create a new configuration file. Example:
 
 ```ruby
 scheme "Example"
+devices: ["iPhone 6s", "iPad Air"]
 
 clean true
 
@@ -183,7 +193,7 @@ For more information visit the [fastlane GitHub page](https://github.com/fastlan
 # Tips
 ## [`fastlane`](https://fastlane.tools) Toolchain
 
-- [`fastlane`](https://fastlane.tools): Connect all deployment tools into one streamlined workflow
+- [`fastlane`](https://fastlane.tools): The easiest way to automate building and releasing your iOS and Android apps
 - [`deliver`](https://github.com/fastlane/fastlane/tree/master/deliver): Upload screenshots, metadata and your app to the App Store
 - [`snapshot`](https://github.com/fastlane/fastlane/tree/master/snapshot): Automate taking localized screenshots of your iOS app on every device
 - [`frameit`](https://github.com/fastlane/fastlane/tree/master/frameit): Quickly put your screenshots into the right device frames

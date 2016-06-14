@@ -48,7 +48,7 @@ Get in contact with the developers on Twitter: [@KrauseFx](https://twitter.com/K
 
 -------
 
-<h5 align="center"><code>spaceship</code> is part of <a href="https://fastlane.tools">fastlane</a>: connect all deployment tools into one streamlined workflow.</h5>
+<h5 align="center"><code>spaceship</code> is part of <a href="https://fastlane.tools">fastlane</a>: The easiest way to automate building and releasing your iOS and Android apps.</h5>
 
 # What's spaceship?
 
@@ -133,12 +133,6 @@ Copy everything from `---\n` to your CI server and provide it as environment var
 ### Spaceship in use
 
 Most [fastlane tools](https://fastlane.tools) already use `spaceship`, like `sigh`, `cert`, `produce`, `pilot` and `boarding`.
-
-### Full Documentation
-
-The detailed documentation of all available classes is available on [RubyDoc](http://www.rubydoc.info/github/fastlane/spaceship/frames).
-
-You can find the log file here `/tmp/spaceship[time]_[pid].log`.
 
 # Technical Details
 
